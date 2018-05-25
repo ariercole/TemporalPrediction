@@ -1,4 +1,4 @@
-### Architecture for building and testing machine learning models with caret and deep learning ###
+# function for building and testing machine learning models with caret and deep learning
 
 library(caret)
 library(doMC)
