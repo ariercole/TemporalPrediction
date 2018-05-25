@@ -1,11 +1,9 @@
-###           Specify formulae for logistic regressions         ###
-###                     CM 2018 - 01 - 22                       ###
+# specify formulae for logistic regressions 
 
-### specify the formulae
-## 1. APACHE as single predictor
+#### 1. APACHE as single predictor
 formula.APACHE <- formula(alive ~ apache_score)
 
-## 2. Simple formulae - each day seperate, each factor alone
+#### 2. Simple formulae - each day seperate, each factor alone
 formula.day1.simple <- formula(alive ~  
                                  age 
                                + sex 
@@ -82,7 +80,7 @@ formula.day5.simple <- formula(alive ~
                                + day5AdrenalineTotal + day5NoradrenalineTotal + day5VasopressinTotal)
 
 
-### custom formulae to add interactions
+#### 3. Custom formulae to add interactions
 # add together to a complete formula, days 1, 2 & 3
 formula.day1.custom <- formula(alive ~  
                                  age 
@@ -174,7 +172,7 @@ formula.day5.custom <- formula(alive ~
                                + day5minLactate:day5minMAP
                                + age:day5maxMAP)
 
-### adding in all previous days
+#### 4. Cumulative formulae
 
 formula.day12.simple<- formula(alive ~  
                                  age 

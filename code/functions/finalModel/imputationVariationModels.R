@@ -1,4 +1,4 @@
-### Build the final model for each of nine imputations for each method and day
+# function to build the final model for each of nine imputations for each method and day
 
 library(caret)
 library(doMC)
@@ -7,8 +7,9 @@ library(dplyr)
 source("functions/MLtuning/saveRDSFiles.R") # function to save files
 source("functions/MLtuning/formulae.R") # define the required formulae
 source("functions/MLtuning_output/getBestTune.R") 
+source("functions/MLtuning/tuneDeepLearningModel.R") 
 
-imputationVariationModels <- function(MLmethods, path.impVar, dayList = data.frame(day = c(1,2,2,3,3,4,4,5,5), cumul = c(F,F,T,F,T,F,T,F,T))) {
+imputationVariationModels <- function(MLmethods, path.impVar, dayList = data.frame(day = c(1,2,2,3,3,4,4,5,5), cumul = c(F,F,T,F,T,F,T,F,T)), augmentDeaths = FALSE) {
   iter.base <- "IMPVAR"
   
   for (MLmethod in MLmethods) {
@@ -54,7 +55,7 @@ imputationVariationModels <- function(MLmethods, path.impVar, dayList = data.fra
                               preProcess = c("YeoJohnson", "center", "scale"))
           
         } else if (MLmethod == "DeepNN") {
-          deepLearningModelTune(tune.grid = tune.grid, 
+          tuneDeepLearningModel(tune.grid = tune.grid, 
                                 dataset_input = trainingData, 
                                 day = day, 
                                 cumulative = cumul, 
@@ -64,7 +65,8 @@ imputationVariationModels <- function(MLmethods, path.impVar, dayList = data.fra
                                 verbose = TRUE,
                                 no.parallel.cores = 1,
                                 tranches.per.core = 1,
-                                imputVarTest = TRUE)
+                                imputVarTest = TRUE,
+                                augmentDeaths = augmentDeaths)
           
         } else {
           classifier <- train(formula.custom, 

@@ -1,6 +1,6 @@
 # function to run 20-fold cross-validation of a keras deep learning model when fed a tuning grid
 
-deepLearningModelTune <- function(tune.grid, dataset_input, day, cumulative, seed.list, file.path, iter, imputVarTest = FALSE, verbose = FALSE, no.parallel.cores, tranches.per.core = 2) {
+tuneDeepLearningModel <- function(tune.grid, dataset_input, day, cumulative, seed.list, file.path, iter, imputVarTest = FALSE, verbose = FALSE, no.parallel.cores, tranches.per.core = 2, augmentDeaths = FALSE) {
   set.seed(42)
   
   # define function to save predictions and results to RDS files
@@ -116,8 +116,16 @@ deepLearningModelTune <- function(tune.grid, dataset_input, day, cumulative, see
       training.df.raw <- dataset[indexIn, ]
       test.df.raw <- dataset[indexOut, ]
       
+      # augment the training data if specified
+      if (augmentDeaths == TRUE) {
+        training.df.raw <- training.df.raw[c(1:nrow(training.df.raw),
+                                             rep(grep(0, training.df.raw$alive), 5)),]
+      }
+      
       # preprocess the data to match the caret pre-processing
+      suppressWarnings(
       training.df.preProc <- preProcess(training.df.raw, method = c("center", "scale", "YeoJohnson"))
+      )
       
       training.df <- predict(training.df.preProc, training.df.raw)
       test.df <- predict(training.df.preProc, test.df.raw)
@@ -150,7 +158,7 @@ deepLearningModelTune <- function(tune.grid, dataset_input, day, cumulative, see
         layer_dense(units = 3, activation = 'softmax')  
       
       # print a summary of the model
-      summary(model)
+      # summary(model)
       
       # compile the model
       model %>% compile(
@@ -164,7 +172,7 @@ deepLearningModelTune <- function(tune.grid, dataset_input, day, cumulative, see
         xtrain, ytrain, 
         epochs = Epochs, batch_size = 128, 
         validation_split = 0.2, 
-        verbose = T
+        verbose = F
       )
       
       # predict the probabilities of the binary outcome on the validation dataset
@@ -173,7 +181,7 @@ deepLearningModelTune <- function(tune.grid, dataset_input, day, cumulative, see
 
       # predict the binary outcome class (alive/dead) on the validation dataset
       y_pred <- model %>% predict_classes(xtest)
-      conf.mat <- confusionMatrix(y_pred - 1, ytest[,3])
+      conf.mat <- confusionMatrix(factor(y_pred - 1), factor(ytest[,3]))
       
       # build the predictions data frame to store all the predictions for the current fold
       suppressWarnings(

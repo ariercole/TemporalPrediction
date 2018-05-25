@@ -1,3 +1,5 @@
+# Script to plot waterfall graph of admission length
+
 library(dplyr)
 
 plot.summary <- cleanData.all %>% group_by(icu_duration_days) %>% summarise(tot = n(), noAlive = sum(alive == "alive"), noDead = sum(alive != "alive"))
@@ -39,10 +41,6 @@ plotMiscGraph("Descriptive", "patientDecay_30", 4000, 2200)
 barplot(plot.df, xlab="Day of admission", col=c("darkgrey","white","#A3C1AD","darkblue", "darkred"), border = NA, las = 1, ylim = c(0,26000), width = 0.9, space = 1/9, xlim = c(0,ncol(plot.df)+1))
 legend("topright", inset = 0.03, legend = c("missing classifier","discharged alive", "deceased", "remain on ICU"), col = c("darkred", "#A3C1AD","darkblue","grey"), bty = "n", pch = 15)
 box()
-# text(x = 0.75, y = 23000, labels = "21,911", pos = 3, adj = 0, srt = 90)
-# text(x = 10.75, y = 4750, labels = "2,909 (13%)", pos = 3, adj = 0, srt = 90)
-# text(x = 20.75, y = 2000, labels = "1,092", pos = 3, adj = 0, srt = 90)
-# text(x = 30.75, y = 1000, labels = "517", pos = 3, adj = 0, srt = 90)
 
 text(x = 1.15, y = 23300, labels = "22,524", pos = 3, adj = 0, srt = 45)
 text(x = 3.15, y = 22700, labels = "21,911", pos = 3, adj = 0, srt = 45)

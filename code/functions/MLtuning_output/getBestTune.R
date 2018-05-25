@@ -1,4 +1,4 @@
-# find the best performing tuning parameters for each day for a machine learning method
+# function to find the best performing tuning parameters for each day for a machine learning method
 
 library(dplyr)
 source("functions/MLtuning_output/getTuningParams.R")

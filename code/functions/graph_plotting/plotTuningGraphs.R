@@ -1,4 +1,4 @@
-### Plot tuning results
+# Function to plot tuning results
 
 plotTuningGraphs <- function() {
   library(dplyr)

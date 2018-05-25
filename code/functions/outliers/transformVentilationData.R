@@ -1,4 +1,5 @@
 # function to transform the ventialtion data by dividing values above 80 by 7.6
+
 transformVentilationData <- function(dataSet) {
   tempDataSet <- dataSet
   for(i in 1:5) {

@@ -1,4 +1,4 @@
-# retrieve the predictions made for the validation dataset from the best performing tuning parameters for a given machine learning method
+# function to retrieve the predictions made for the validation dataset from the best performing tuning parameters for a given machine learning method
 
 library(dplyr)
 library(parallel)

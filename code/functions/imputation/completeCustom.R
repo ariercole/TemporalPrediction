@@ -1,6 +1,7 @@
 # custom wrapper for the complete function to remove non-expected values
 
 library(mice)
+library(dplyr)
 
 completeCustom <- function(mids, imput.number) {
   temp.imput <- mice::complete(mids, imput.number)

@@ -1,5 +1,7 @@
 # function to load the results or predictions of the models for each imputation
 
+library(tcltk)
+
 getImputationResults <- function(MLmethod, imputationPath, output.type = "results", invert = FALSE) {
   # generate list of possible classifiers
   combinations <- expand.grid(day = 1:5,

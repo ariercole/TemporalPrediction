@@ -1,13 +1,13 @@
 # Plots histograms and beanplots to visually descibe the input dataset
 
+library(beanplot)
+library(readxl)
+library(tidyr)
+library(dplyr)
+
 source("functions/graph_plotting/generateRootDir.R")
 
 plotDescriptiveGraphs <- function(inputData, directory, exclusions = NULL, height = 6000, width = 3000, titled = TRUE, legend = TRUE, ptSize = 14) {
-  ### load packages
-  library(beanplot)
-  library(readxl)
-  library(tidyr)
-  library(dplyr)
   
   ### Load the list of variables to be plotted
   continuousVariableDF <- filter(allVariablesDF, variableType %in% c("continuous", "integer"))
@@ -215,20 +215,20 @@ plotDescriptiveGraphs <- function(inputData, directory, exclusions = NULL, heigh
   dev.off()
 }
 
-plotBeanplots <- function(variable, plotName, plotUnits, type, inputData, legend = TRUE, titled = TRUE) {
-
+plotBeanplots <- function(variable, plotName, plotUnits, type, inputData, legend = TRUE, titled = TRUE, splitName = "alive", splitLevel1 = "alive", splitLevel2 = "dead") {
+  
   #pull out variable i into a long dataframe
   tempDataFrame = gather(select(inputData, contains(variable)))
-  tempDataFrame$alive <- inputData$alive
+  tempDataFrame$splitter <- inputData[[splitName]]
   
   #remove variable from names of days and reconstruct naming
   tempDataFrame$key = gsub(variable, "", tempDataFrame$key)
   tempDataFrame$key = gsub("day", "Day ", tempDataFrame$key)
   
-  aliveDF <- filter(tempDataFrame, alive == "alive")
-  deceasedDF <- filter(tempDataFrame, alive == "dead")
+  level.1.DF <- filter(tempDataFrame, splitter == splitLevel1)
+  level.2.DF <- filter(tempDataFrame, splitter == splitLevel2)
   
-  #set up beanplot and plot alive 
+  #set up beanplot
   if (type == "time") {
     xlimits <- c(0,6)
   } else {
@@ -240,8 +240,8 @@ plotBeanplots <- function(variable, plotName, plotUnits, type, inputData, legend
   #set plotting units
   plotUnits <- ifelse(!is.na(plotUnits), paste(" / ", plotUnits, sep = ""), "")
   
-  #plot alive
-  beanplot(value~key, aliveDF, 
+  #plot alive/level1
+  beanplot(value~key, level.1.DF, 
            side = "first", 
            col=c("#A3C1AD","#A3C1AD", "lightgrey"),
            xlim = xlimits,
@@ -255,8 +255,8 @@ plotBeanplots <- function(variable, plotName, plotUnits, type, inputData, legend
            what = c(1,1,0,1), 
            las = 1)
   
-  #plot dead
-  beanplot(value~key, deceasedDF, 
+  #plot deceased/level2
+  beanplot(value~key, level.2.DF, 
            side = "second", 
            col=c("darkblue","darkblue", "lightgrey"), 
            add = TRUE,
@@ -265,26 +265,26 @@ plotBeanplots <- function(variable, plotName, plotUnits, type, inputData, legend
   #add arithmetic mean lines
   if (type == "time") {
     for (day in 1:5) {
-      meanVal <- mean(aliveDF$value[aliveDF$key == paste("Day ",day,sep="")], na.rm = TRUE)
+      meanVal <- mean(level.1.DF$value[level.1.DF$key == paste("Day ",day,sep="")], na.rm = TRUE)
       lines(x = c(day, day - 0.5), 
             y = c(meanVal,meanVal), 
             col = "black", 
             lwd = 2)
       
-      meanVal <- mean(deceasedDF$value[deceasedDF$key == paste("Day ",day,sep="")], na.rm = TRUE)
+      meanVal <- mean(level.2.DF$value[level.2.DF$key == paste("Day ",day,sep="")], na.rm = TRUE)
       lines(x = c(day, day + 0.5), 
             y = c(meanVal,meanVal), 
             col = "black", 
             lwd = 2)
     } 
   } else {
-    meanVal <- mean(aliveDF$value, na.rm = TRUE)
+    meanVal <- mean(level.1.DF$value, na.rm = TRUE)
     lines(x = c(1, 1 - 0.5), 
           y = c(meanVal,meanVal), 
           col = "black", 
           lwd = 2)
     
-    meanVal <- mean(deceasedDF$value, na.rm = TRUE)
+    meanVal <- mean(level.2.DF$value, na.rm = TRUE)
     lines(x = c(1, 1 + 0.5), 
           y = c(meanVal,meanVal), 
           col = "black", 
@@ -292,5 +292,5 @@ plotBeanplots <- function(variable, plotName, plotUnits, type, inputData, legend
   }
   
   #add a legend
-  if(legend == TRUE) legend('topright', fill=c('#A3C1AD','darkblue'), legend= c('Alive', 'Deceased'), bty ="n")
+  if(legend == TRUE) legend('topright', fill=c('#A3C1AD','darkblue'), legend= c(splitLevel1, ifelse(splitLevel2 == "dead", "deceased", splitLevel2)), bty ="n")
 }

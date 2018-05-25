@@ -1,5 +1,4 @@
-###    Load data and set up dataSet       ###
-###          CM 2018 - 01 - 19            ###
+### Script to load data and set up dataSet
 
 library(readr)
 library(readxl)
@@ -39,7 +38,7 @@ dataSet <- mutate(rawData,
 
 
 ### load list of variables
-allVariablesDF <- read_excel("dataset/allVariableList.xlsx")
+allVariablesDF <- read_excel("support_data/allVariableList.xlsx")
 allVariablesDF$day <- as.integer(allVariablesDF$day)
 
 

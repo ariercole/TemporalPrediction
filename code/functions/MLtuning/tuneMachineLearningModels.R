@@ -9,7 +9,7 @@ source("functions/MLtuning/formulae.R") # define the required formulae
 source("functions/MLtuning/tuneDeepLearningModel.R") # function to mimic caret in tuning a deep learning model
 
 
-tuneMachineLearningModels <- function(Iter, DeepIter, MLmethods, path.D, seed.list, dayList = data.frame(day = c(1,2,2,3,3,4,4,5,5), cumul = c(F,F,T,F,T,F,T,F,T))) {
+tuneMachineLearningModels <- function(Iter, DeepIter, MLmethods, path.D, seed.list, dayList = data.frame(day = c(1,2,2,3,3,4,4,5,5), cumul = c(F,F,T,F,T,F,T,F,T)), fullData.imput.in, augmentDeaths = FALSE) {
 
   for (MLmethod in MLmethods) {
     
@@ -27,7 +27,7 @@ tuneMachineLearningModels <- function(Iter, DeepIter, MLmethods, path.D, seed.li
         formula.simple <- get(paste("formula.day",day,".simple",sep=""))
       }
       
-      trainingData <- filter(fullData.imput1, icu_duration_days >= day)
+      trainingData <- filter(fullData.imput.in, icu_duration_days >= day)
         
       set.seed(42)
       if(MLmethod == "glm") {
@@ -57,7 +57,8 @@ tuneMachineLearningModels <- function(Iter, DeepIter, MLmethods, path.D, seed.li
                               verbose = TRUE,
                               no.parallel.cores = no.parallel.cores,
                               tranches.per.core = 2,
-                              imputVarTest = FALSE)
+                              imputVarTest = FALSE,
+                              augmentDeaths = augmentDeaths)
         
       } else {
         classifier <- train(formula.simple, 

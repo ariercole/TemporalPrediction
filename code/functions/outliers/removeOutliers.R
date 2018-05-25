@@ -1,4 +1,4 @@
-### build function to remove outliers, calling a function to set the limites based on one of three strategies
+### function to remove outliers, calling a function to set the limites based on one of three strategies
 
 generateLimits <- function(dataSet, method = "singleDaySeparate") {
   limitsDF <- data.frame(variable = allVariablesDF$variable, UL = rep(NA, nrow(allVariablesDF)), LL = rep(NA, nrow(allVariablesDF)))

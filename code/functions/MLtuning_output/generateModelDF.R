@@ -1,10 +1,9 @@
-### Function to retrieve the predictions and results from machine learning model output files
+# function to retrieve the predictions and results from machine learning model output files
+
 library(caret)
 library(dplyr)
 
-path.D <- "~/RDSfiles"
-
-generateModelDF <- function() {
+generateModelDF <- function(path.D = "~/RDSfiles") {
   # generate list of possible classifiers
   combinations <- expand.grid(MLmethod = c("adaboost", "avNNet", "parRF", "svmRadialWeights", "glm", "DeepNN", "APACHE"),
                               days = 0:5,
