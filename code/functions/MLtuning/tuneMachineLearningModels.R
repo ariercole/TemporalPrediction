@@ -13,7 +13,9 @@ tuneMachineLearningModels <- function(Iter, DeepIter, MLmethods, path.D, seed.li
 
   for (MLmethod in MLmethods) {
     
-    tune.grid <- get(paste("tune.grid.", MLmethod, sep = ""))
+    if (MLmethod != "APACHE" & MLmethod != "glm") {
+      tune.grid <- get(paste("tune.grid.", MLmethod, sep = ""))
+    }
     
     for(i in 1:nrow(dayList)) {
       day <- dayList$day[i]
